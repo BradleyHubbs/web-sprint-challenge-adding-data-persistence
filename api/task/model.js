@@ -1,6 +1,26 @@
+const db = require('../../data/dbConfig');
+
 // build your `Task` model here
-function getTasks(){
-    return Promise.resolve('You hit the Tasks!!')
+async function getTasks(){
+    const tasks = await db ('tasks as t')
+    .join('projects as p', 'p.project_id', 't.project_id')
+    .select(
+        'task_id',
+        'task_description',
+        'task_notes',
+        'task_completed',
+        'project_name',
+        'project_description'
+    )
+    return tasks;
 }
 
-module.exports = {getTasks}
+async function createTask(task){
+    const [task_id] = await db('tasks').insert(task);
+    const msg = await db('tasks').where({task_id}).first();
+    
+    return msg;
+
+}
+
+module.exports = {getTasks, createTask}

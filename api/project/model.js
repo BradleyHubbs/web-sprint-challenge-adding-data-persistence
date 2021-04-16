@@ -1,6 +1,12 @@
-// build your `Project` model here
+const db = require('../../data/dbConfig');
+
 function getProjects(){
-    return Promise.resolve('You hit the Projects!!')
+    return db('projects')
 }
 
-module.exports = {getProjects}
+async function createProject(project){
+    const [project_id] = await db('projects').insert(project);
+    return getProjects().where({project_id}).first();
+}
+
+module.exports = {getProjects, createProject}
